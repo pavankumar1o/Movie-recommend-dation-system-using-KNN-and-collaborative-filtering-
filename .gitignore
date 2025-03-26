@@ -1,174 +1,78 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+import tkinter as tk
+from tkinter import ttk, messagebox
+from PIL import Image, ImageTk  # For handling background images
 
-# C extensions
-*.so
+def get_recommendations(preference):
+    movie_db = {
+        "Action": [
+            {"title": "Mad Max: Fury Road", "year": 2015, "cast": "Tom Hardy, Charlize Theron"},
+            {"title": "Gladiator", "year": 2000, "cast": "Russell Crowe, Joaquin Phoenix"},
+            {"title": "The Dark Knight", "year": 2008, "cast": "Christian Bale, Heath Ledger"},
+            {"title": "John Wick", "year": 2014, "cast": "Keanu Reeves, Ian McShane"},
+            {"title": "Die Hard", "year": 1988, "cast": "Bruce Willis, Alan Rickman"},
+        ],
+        "Comedy": [
+            {"title": "Superbad", "year": 2007, "cast": "Jonah Hill, Michael Cera"},
+            {"title": "Step Brothers", "year": 2008, "cast": "Will Ferrell, John C. Reilly"},
+        ],
+        "Drama": [
+            {"title": "Forrest Gump", "year": 1994, "cast": "Tom Hanks, Robin Wright"},
+            {"title": "The Shawshank Redemption", "year": 1994, "cast": "Tim Robbins, Morgan Freeman"},
+        ],
+    }
+    return movie_db.get(preference, [{"title": "No recommendations found", "year": "", "cast": ""}])
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+def create_gui():
+    root = tk.Tk()
+    root.title("Movie Recommendation System")
+    root.geometry("600x400")
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+    try:
+        bg_image = Image.open("image.png")
+        bg_image = bg_image.resize((600, 400), Image.LANCZOS)
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        bg_label = tk.Label(root, image=bg_photo)
+        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("Background image not found. Running without background.")
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+    main_frame = tk.Frame(root, bg="lightgrey", bd=2, relief="ridge")
+    main_frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
+    title_label = tk.Label(main_frame, text="Movie Recommendation System", font=("Helvetica", 18, "bold"), bg="lightgrey", fg="darkblue")
+    title_label.pack(pady=10)
 
-# Translations
-*.mo
-*.pot
+    genre_label = tk.Label(main_frame, text="Select your preferred genre:", font=("Helvetica", 12), bg="lightgrey")
+    genre_label.pack(pady=5)
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+    genre_var = tk.StringVar()
+    genre_options = ["Action", "Comedy", "Drama"]
+    genre_dropdown = ttk.Combobox(main_frame, textvariable=genre_var, values=genre_options, font=("Helvetica", 10))
+    genre_dropdown.pack()
 
-# Flask stuff:
-instance/
-.webassets-cache
+    recommendation_frame = tk.Frame(main_frame, bg="black", bd=1, relief="sunken")
+    recommendation_frame.pack(pady=10, fill="both", expand=True)
 
-# Scrapy stuff:
-.scrapy
+    recommendation_label = tk.Label(recommendation_frame, text="Recommendations:", font=("Helvetica", 12, "bold"), bg="black", fg="white", anchor="w")
+    recommendation_label.pack(fill="x")
 
-# Sphinx documentation
-docs/_build/
+    recommendation_text = tk.Text(recommendation_frame, height=6, width=40, font=("Helvetica", 10), wrap="word", bg="black", fg="white", bd=0)
+    recommendation_text.pack(pady=5, padx=5)
+    recommendation_text.tag_configure("highlight", font=("Helvetica", 10, "bold"), foreground="white", background="gray")
 
-# PyBuilder
-.pybuilder/
-target/
+    def recommend_movies():
+        preference = genre_var.get()
+        if preference:
+            recommendations = get_recommendations(preference)
+            recommendation_text.delete("1.0", tk.END)
+            for movie in recommendations:
+                recommendation_text.insert(tk.END, f"{movie['title']} ({movie['year']})\nCast: {movie['cast']}\n\n", "highlight")
+        else:
+            messagebox.showwarning("Input Error", "Please select a genre!")
 
-# Jupyter Notebook
-.ipynb_checkpoints
+    recommend_button = tk.Button(main_frame, text="Get Recommendations", command=recommend_movies, font=("Helvetica", 12, "bold"), bg="darkblue", fg="white")
+    recommend_button.pack(pady=10)
 
-# IPython
-profile_default/
-ipython_config.py
+    root.mainloop()
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
-
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
-# UV
-#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#uv.lock
-
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
-
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/latest/usage/project/#working-with-version-control
-.pdm.toml
-.pdm-python
-.pdm-build/
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
-
-# Ruff stuff:
-.ruff_cache/
-
-# PyPI configuration file
-.pypirc
+create_gui()
