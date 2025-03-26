@@ -1,0 +1,2 @@
+# Movie-recommend-dation-system-using-KNN-and-collaborative-filtering-
+Movie recommendation systems are based on algorithms that analyze patterns in user behavior  and leverage this information to make predictions about what other movies the user might  enjoy. Traditional recommendation techniques include content-based filtering, where the focus  is on the attributes of the items (such as genre, actors, or director).
